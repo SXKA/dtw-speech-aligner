@@ -1,0 +1,8 @@
+librosa
+matplotlib
+numpy
+dtw-python
+scipy
+sklearn
+soundfile
+wrapt
