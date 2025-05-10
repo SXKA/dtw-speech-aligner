@@ -13,10 +13,10 @@ python main.py \
   [--feat_types mfcc f0] \
   [--save_plot]
 ```
-- ``query_path``: path to the (pre‑VAD) query audio.
-- ``reference_path``: path to the (pre‑VAD) reference audio.
-- ``feat_types``: which features to use: mfcc, f0 (default: mfcc).
-- ``save_plot``: save DTW & spectrogram plots.
+- `query_path`: path to the (pre‑VAD) query audio.
+- `reference_path`: path to the (pre‑VAD) reference audio.
+- `feat_types`: which features to use: mfcc, f0 (default: mfcc).
+- `save_plot`: save DTW & spectrogram plots.
 ## Examples
 ### Chinese
 #### Audio
