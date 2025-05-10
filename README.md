@@ -1,6 +1,10 @@
 # dtw-speech-aligner
 A Python tool for speech segment alignment using Dynamic Time Warping (DTW). 
 Assumes input audio has been pre‑processed by VAD (voice activity detection).
+## Features
+- Subsequence DTW alignment of two speech segments (query vs. reference) 
+- Supports MFCC and/or fundamental‑frequency (F0) features  
+- Outputs clipped reference audio and optional diagnostic plots
 ## Usage
 ```bash
 python main.py \
@@ -13,10 +17,6 @@ python main.py \
 - ``reference_path``: path to the (pre‑VAD) reference audio.
 - ``feat_types``: which features to use: mfcc, f0 (default: mfcc).
 - ``save_plot``: save DTW & spectrogram plots.
-## Features
-- Subsequence DTW alignment of two speech segments (query vs. reference) 
-- Supports MFCC and/or fundamental‑frequency (F0) features  
-- Outputs clipped reference audio and optional diagnostic plots
 ## Examples
 ### Chinese
 #### Audio
