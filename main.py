@@ -148,7 +148,7 @@ def feat_extract(
             supported type: f0, f0_delta, f0_delta2, mfcc, mfcc_delta, mfcc_delta2, htt-mfcc, htt-mfcc_delta, htt-mfcc_delta2
 
     Returns:
-        features (OrderedDict): Feature ordered dict
+        OrderedDict: Feature ordered dict
     """
 
     supported_feat_types = set(FEAT_WEIGHTS.keys())
@@ -221,8 +221,8 @@ def f0_mel_spec_plot(
         hop_length (int, optional): number of samples between successive frames
 
     Returns:
-        figure (Figure): Figure
-        axes (Any): Axes or array of axes
+        Figure: Figure
+        Any: Axes or array of axes
     """
 
     if S is None:
@@ -271,7 +271,7 @@ def pca_transform(wrapped, instance, args, kwargs):
         kwargs: the dictionary of keyword arguments supplied when the decorated function was called
 
     Returns:
-        value: wrapped function return value
+        Any: wrapped function return value
     """
 
     if kwargs["query"].shape != kwargs["query"].shape:
@@ -308,7 +308,7 @@ def dtw_plot(
         label (str, optional): time series label
 
     Returns:
-        ax (Any): Axes or array of axes
+        Any: Axes or array of axes
     """
 
     align = copy.deepcopy(alignment)
