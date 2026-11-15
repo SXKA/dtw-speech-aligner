@@ -83,3 +83,26 @@ def test_f0_plot_does_not_mutate_input():
     f0 = np.array([0.0, 220.0, 0.0, 330.0])
     main.f0_mel_spec_plot(y=y, f0=f0, sr=SR, n_fft=1024, hop_length=256)
     assert np.array_equal(f0, [0.0, 220.0, 0.0, 330.0])
+
+
+def test_zscore_of_constant_feature_is_finite():
+    assert np.array_equal(main.zscore(np.zeros((1, 5))), np.zeros((1, 5)))
+
+
+def test_unvoiced_f0_does_not_break_alignment(tmp_path, monkeypatch, capsys):
+    # White noise has no pitch, so F0 is all zeros.
+    rng = np.random.default_rng(1)
+    sf.write(tmp_path / "q.wav", 0.1 * rng.normal(size=SR), SR)
+    sf.write(tmp_path / "r.wav", 0.1 * rng.normal(size=2 * SR), SR)
+    monkeypatch.chdir(tmp_path)
+
+    main.main(
+        Namespace(
+            query_path=str(tmp_path / "q.wav"),
+            reference_path=str(tmp_path / "r.wav"),
+            feat_types=["f0", "mfcc"],
+            save_plot=False,
+        )
+    )
+
+    assert "Begin time" in capsys.readouterr().out

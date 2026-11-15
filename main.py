@@ -57,10 +57,8 @@ def main(args: Namespace):
     weighted_norm_reference_feats = []
 
     for feat_type in feat_types:
-        weighted_norm_query_feats.append(stats.zscore(query_feats[feat_type], axis=-1))
-        weighted_norm_reference_feats.append(
-            stats.zscore(reference_feats[feat_type], axis=-1)
-        )
+        weighted_norm_query_feats.append(zscore(query_feats[feat_type]))
+        weighted_norm_reference_feats.append(zscore(reference_feats[feat_type]))
 
         weighted_norm_query_feats[-1] = (
                 FEAT_WEIGHTS[feat_type] * weighted_norm_query_feats[-1]
@@ -78,7 +76,8 @@ def main(args: Namespace):
         step_pattern=dtw.rabinerJuangStepPattern(6, slope_weighting='c'),
         open_begin=True,
         open_end=True,
-        keep_internals=True,
+        # The cost matrix is only needed for the three-way plot.
+        keep_internals=args.save_plot,
     )
     samples = librosa.frames_to_samples(
         [alignment.index2[0], alignment.index2[-1]],
@@ -132,6 +131,22 @@ def main(args: Namespace):
             )
 
             plt.savefig(f"{feat_type}_dtw.png", bbox_inches="tight")
+
+
+def zscore(feature: np.ndarray) -> np.ndarray:
+    """Standardize a feature along time, mapping constant rows to zero.
+
+    scipy's zscore returns NaN for a constant row (e.g. F0 of an unvoiced
+    clip, which is all zeros), and NaN makes the DTW fail.
+
+    Args:
+        feature (np.ndarray): Feature of shape (..., frames).
+
+    Returns:
+        np.ndarray: Standardized feature without NaN.
+    """
+
+    return np.nan_to_num(stats.zscore(feature, axis=-1))
 
 
 def feat_extract(
@@ -315,7 +330,9 @@ def dtw_plot(
         Any: Axes or array of axes
     """
 
-    align = copy.deepcopy(alignment)
+    # Only index1 is replaced below, so a shallow copy suffices; a deep copy
+    # duplicated the full cost matrix for every plotted feature.
+    align = copy.copy(alignment)
     shift_direction = None
     shifted_query = query
     query_begin, query_end = align.index1[0], align.index1[-1]
