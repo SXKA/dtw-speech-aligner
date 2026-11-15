@@ -3,6 +3,6 @@ matplotlib
 numpy
 dtw-python
 scipy
-sklearn
+scikit-learn
 soundfile
 wrapt
