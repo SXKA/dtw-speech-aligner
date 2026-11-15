@@ -83,7 +83,8 @@ def main(args: Namespace):
     samples = librosa.frames_to_samples(
         [alignment.index2[0], alignment.index2[-1]],
         hop_length=hop_length,
-        n_fft=n_fft,
+        # No n_fft here: the features use a centered STFT, and passing n_fft would add an
+        # extra n_fft // 2 offset meant for non-centered frames.
     )
     begin, end = samples[0], samples[-1]
     sf.write("clip.wav", data=reference_audio[begin: end + 1], samplerate=sr)
@@ -251,6 +252,8 @@ def f0_mel_spec_plot(
             hop_length=hop_length,
         )[0]
     else:
+        # Copy so the caller's feature array is not modified.
+        f0 = f0.copy()
         f0[f0 == 0] = np.nan
 
     times = librosa.times_like(f0, sr=sr)
@@ -274,7 +277,8 @@ def pca_transform(wrapped, instance, args, kwargs):
         Any: wrapped function return value
     """
 
-    if kwargs["query"].shape != kwargs["query"].shape:
+    # Time lengths may differ; only the feature dimensions must match.
+    if kwargs["query"].shape[1:] != kwargs["reference"].shape[1:]:
         raise ValueError("query and reference shape incompatibility.")
 
     if kwargs["query"].ndim > 1:
@@ -322,7 +326,7 @@ def dtw_plot(
         align.index1 = [index + offset for index in align.index1]
         shift_direction = "right"
         shifted_query = np.concatenate((np.full(offset, np.nan), shifted_query))
-    elif query_end > reference_begin:
+    elif query_begin > reference_begin:
         align.index1 = [index - offset for index in align.index1]
         shift_direction = "left"
         shifted_query = shifted_query[offset:]
