@@ -1,6 +1,5 @@
 import argparse
 import copy
-
 from argparse import Namespace
 from collections import OrderedDict
 from typing import Any
@@ -11,7 +10,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import soundfile as sf
 import wrapt
-
 from dtw import DTW
 from matplotlib.figure import Figure
 from matplotlib.ticker import FuncFormatter
@@ -304,7 +302,7 @@ def pca_transform(wrapped, instance, args, kwargs):
         kwargs["reference"] = pca.fit_transform(kwargs["reference"]).ravel()
 
         if kwargs["label"] is not None:
-            kwargs["label"] = f"PCA_{kwargs["label"]}"
+            kwargs["label"] = f"PCA_{kwargs['label']}"
 
     return wrapped(*args, **kwargs)
 
