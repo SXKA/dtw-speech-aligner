@@ -1,0 +1,35 @@
+[project]
+name = "dtw-speech-aligner"
+version = "0.1.0"
+description = "Speech segment alignment with subsequence dynamic time warping."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "librosa",
+    "matplotlib",
+    "numpy",
+    "dtw-python",
+    "scipy",
+    "scikit-learn",
+    "soundfile",
+    "wrapt",
+]
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "ruff",
+]
+
+[tool.uv]
+# Scripts, not an installable package.
+package = false
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I", "B"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

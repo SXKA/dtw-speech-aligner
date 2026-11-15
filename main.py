@@ -1,6 +1,5 @@
 import argparse
 import copy
-
 from argparse import Namespace
 from collections import OrderedDict
 from typing import Any
@@ -11,7 +10,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import soundfile as sf
 import wrapt
-
 from dtw import DTW
 from matplotlib.figure import Figure
 from matplotlib.ticker import FuncFormatter
@@ -60,12 +58,8 @@ def main(args: Namespace):
         weighted_norm_query_feats.append(zscore(query_feats[feat_type]))
         weighted_norm_reference_feats.append(zscore(reference_feats[feat_type]))
 
-        weighted_norm_query_feats[-1] = (
-                FEAT_WEIGHTS[feat_type] * weighted_norm_query_feats[-1]
-        )
-        weighted_norm_reference_feats[-1] = (
-                FEAT_WEIGHTS[feat_type] * weighted_norm_reference_feats[-1]
-        )
+        weighted_norm_query_feats[-1] = FEAT_WEIGHTS[feat_type] * weighted_norm_query_feats[-1]
+        weighted_norm_reference_feats[-1] = FEAT_WEIGHTS[feat_type] * weighted_norm_reference_feats[-1]
 
     query = np.vstack(weighted_norm_query_feats).T
     reference = np.vstack(weighted_norm_reference_feats).T
@@ -73,7 +67,7 @@ def main(args: Namespace):
     alignment = dtw.dtw(
         query,
         reference,
-        step_pattern=dtw.rabinerJuangStepPattern(6, slope_weighting='c'),
+        step_pattern=dtw.rabinerJuangStepPattern(6, slope_weighting="c"),
         open_begin=True,
         open_end=True,
         # The cost matrix is only needed for the three-way plot.
@@ -86,7 +80,7 @@ def main(args: Namespace):
         # extra n_fft // 2 offset meant for non-centered frames.
     )
     begin, end = samples[0], samples[-1]
-    sf.write("clip.wav", data=reference_audio[begin: end + 1], samplerate=sr)
+    sf.write("clip.wav", data=reference_audio[begin : end + 1], samplerate=sr)
 
     times = librosa.samples_to_time(np.array([begin, end]), sr=sr)
     print(f"Begin time: {times[0]}s")
@@ -150,7 +144,7 @@ def zscore(feature: np.ndarray) -> np.ndarray:
 
 
 def feat_extract(
-        y: np.ndarray, sr: int, n_fft: int, hop_length: int, feat_types: set[str]
+    y: np.ndarray, sr: int, n_fft: int, hop_length: int, feat_types: set[str]
 ) -> OrderedDict[str, np.ndarray]:
     """
     Speech feature extraction.
@@ -217,13 +211,13 @@ def feat_extract(
 
 
 def f0_mel_spec_plot(
-        y: np.ndarray = None,
-        S=None,
-        f0: np.ndarray = None,
-        sr: int = None,
-        n_fft: int = None,
-        hop_length: int = None,
-        **kwargs,
+    y: np.ndarray = None,
+    S=None,
+    f0: np.ndarray = None,
+    sr: int = None,
+    n_fft: int = None,
+    hop_length: int = None,
+    **kwargs,
 ) -> tuple[Figure, Any]:
     """
     Draw f0 and mel spectrogram.
@@ -304,18 +298,18 @@ def pca_transform(wrapped, instance, args, kwargs):
         kwargs["reference"] = pca.fit_transform(kwargs["reference"]).ravel()
 
         if kwargs["label"] is not None:
-            kwargs["label"] = f"PCA_{kwargs["label"]}"
+            kwargs["label"] = f"PCA_{kwargs['label']}"
 
     return wrapped(*args, **kwargs)
 
 
 @pca_transform
 def dtw_plot(
-        alignment: DTW,
-        query: np.ndarray,
-        reference: np.ndarray,
-        frame_length: float,
-        label: str = None,
+    alignment: DTW,
+    query: np.ndarray,
+    reference: np.ndarray,
+    frame_length: float,
+    label: str = None,
 ) -> Any:
     """
     Draw Dynamic Time Warping (DTW).
@@ -375,24 +369,28 @@ def dtw_plot(
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--query_path",
-                        type=str,
-                        required=True,
-                        help="Query audio path.",
+    parser.add_argument(
+        "--query_path",
+        type=str,
+        required=True,
+        help="Query audio path.",
     )
-    parser.add_argument("--reference_path",
-                        type=str,
-                        required=True,
-                        help="Reference audio path.",
+    parser.add_argument(
+        "--reference_path",
+        type=str,
+        required=True,
+        help="Reference audio path.",
     )
-    parser.add_argument("--feat_types",
-                        nargs="+",
-                        default=["mfcc"],
-                        choices=["f0", "mfcc", "F0", "MFCC"],
-                        help="Supported feature types: f0, MFCC. Default: MFCC.",
+    parser.add_argument(
+        "--feat_types",
+        nargs="+",
+        default=["mfcc"],
+        choices=["f0", "mfcc", "F0", "MFCC"],
+        help="Supported feature types: f0, MFCC. Default: MFCC.",
     )
-    parser.add_argument("--save_plot", 
-                        action="store_true", 
-                        help="If True, save plot. Otherwise, plotting is skipped.",
+    parser.add_argument(
+        "--save_plot",
+        action="store_true",
+        help="If True, save plot. Otherwise, plotting is skipped.",
     )
     main(parser.parse_args())
