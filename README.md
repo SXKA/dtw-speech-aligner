@@ -6,8 +6,12 @@ Assumes input audio has been pre‑processed by VAD (voice activity detection).
 - Supports MFCC and/or fundamental‑frequency (F0) features  
 - Outputs clipped reference audio and optional diagnostic plots
 ## Usage
+Install the dependencies with [uv](https://docs.astral.sh/uv/):
 ```bash
-python main.py \
+uv sync
+```
+```bash
+uv run python main.py \
   --query_path   path/to/query_audio \
   --reference_path path/to/reference_audio \
   [--feat_types mfcc f0] \

@@ -1,8 +1,0 @@
-librosa
-matplotlib
-numpy
-dtw-python
-scipy
-scikit-learn
-soundfile
-wrapt
